@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Максим Валяев</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="statics/css/about_style.css">
+    <style type="text/css">
+  </style>
+</head>
+
+<body class="page light-theme">
+    <div class="container" >
+        
+        <h3>Обо мне</h3>
+        <br>
+        
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                <p> Так как в этом мире я заспавнился относительно не давно, а конкретно в 2002 году, обо мне мало что можно сказать, но начнём по порядку</p>
+                <p> Родился и рос до 4.5 лет я в Республике Казахстан в крайне токсичном городе Усть-Каменогорск, про токсичность - это не преувеличение из-за большого количества вредных заводов в городе слова хорошая экология - это что-то из нереального, а соответственно про здоровую и долгую жизнь, живя в там, люди не задумываются. А те кто задумаются, рано или поздно от туда уезжают...
+                </p>
+                <p>
+                  Немного погодя после переезда в Новосибирск, меня отдали в среднюю школу №28 в Калининском районе, где я и проучился 11 лет. 
+                  По окончании обучения в этом Лицее (да, пока я учился эта школа сменила статус несколько раз), когда нам вручали аттестаты меня позвали преподавать робототехнику,
+                   так как специалистов либо нет, либо стоят они дорого, а у меня и коллеги, в своё время, были неплохие достижения в этой области.
+                   Так вот и работаю там уже 2 года. 
+                </p>
+                <p>На данный момент, я учусь в НГТУ на ФПМИ и в рамках лабораторной работы по WEB программированию верстаю эту страницу.</p>
+            </div>
+        
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                <img src="statics/img/img6.jpg" alt="Усть-Каменогорск">
+                <img src="statics/img/img7.jpg" alt="фото с работы">
+                <img src="statics/img/img8.jpg" alt="скрин этой страницы">
+            </div>
+        </div>
+        <br>
+        <div class="column">
+            <p>Чтобы оправдать курс на htmlacademy, вот кнопка по смене темы:</p>
+            <button class="theme-button" type="button">Изменить тему</button>
+        </div>
+        <br>
+        <hr>
+        <br>
+    </div>
+    <h1>Комментарии</h1><hr>
+    
+    <div id="comments" class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6"></div>
+
+    <div class="card-body">
+      <h4>Ваш комментарий</h4>
+      <form id="comm_form" method="post" style="margin-top: 1.3em;">
+        <p>{{ comment_form.body }}</p>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary  btn-lg">Отправить</button>
+      </form>
+    </div>
+
+    {% block javascript %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+    <script>
+      function test () {
+        document.getElementById("comments").innerHTML = "";
+        $.ajax({
+            data: '',
+            url: "{% url 'get_all_coms' %}",
+            success: function (response) {
+                if (response.len_comms != 0) {
+                  for (let i = 0; i < response.len_comms; i++){
+                    comments.insertAdjacentHTML('beforeend', '<p> Дата публикации: ' + response.all_comms[i]['date'] + ' </p>');
+                    comments.insertAdjacentHTML('beforeend', '<p>' + response.all_comms[i]['body'] + '</p>');
+                    comments.insertAdjacentHTML('beforeend', '<hr>');
+                  }
+                }
+                else {
+                  comments.insertAdjacentHTML('beforeend', '<p>Пока комментариев нет :(</p>');
+                }
+            },
+            error: function (response) {
+                console.log(response.responseJSON.errors)
+            }
+        });
+        return false;
+      };
+      test()
+      $('#comm_form').submit(function () {
+              $.ajax({
+                  data: $(this).serialize(),
+                  type: $(this).attr('method'),
+                  url: "{% url 'sendcomms' %}",
+                  success: function (response) {
+                    test();
+                  },
+                  error: function (response) {
+                      alert(response.responseJSON.errors);
+                      console.log(response.responseJSON.errors)
+                  }
+              
+              });
+              id_body.value = '';
+              
+              return false;
+          });
+      
+    </script>
+    {% endblock javascript %}
+
+
+</body>
+<footer>
+    <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h3>Контакты для связи</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <p>Почта: <a href="mailto: maks.valiaev@yandex.ru">maks.valiaev@yandex.ru</a></p>
+            <p>Телеграм: <a href="https://t.me/FizMaks">@Fizmaks</a></p>
+          </div>
+        </div>
+      </div>
+      <script src="statics/js/color.js"></script>
+</footer>
+
+</html>
